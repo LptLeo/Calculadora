@@ -116,7 +116,7 @@ export const Calculator: React.FC<CalculatorProps> = ({
     });
   }, [waitingForNextOperand, soundEnabled, triggerKeyVisual]);
 
-  // Clear all (AC)
+  // Clear all (AC) - Limpeza total do visor, linha superior e fita algébrica
   const clearAll = useCallback(() => {
     playKeyClick('clear', soundEnabled);
     triggerKeyVisual('AC');
@@ -125,6 +125,8 @@ export const Calculator: React.FC<CalculatorProps> = ({
     setOperator(null);
     setWaitingForNextOperand(false);
     setErrorMessage(null);
+    setLastCalculation(null);
+    setToastFeedback(null);
   }, [soundEnabled, triggerKeyVisual]);
 
   // Inverter sinal (±) - Inverso aditivo
@@ -390,9 +392,7 @@ export const Calculator: React.FC<CalculatorProps> = ({
                   <>
                     {lastCalculation.operand1} {lastCalculation.operatorSymbol} {lastCalculation.operand2} =
                   </>
-                ) : (
-                  'Pronta para calcular'
-                )}
+                ) : null}
               </span>
             )}
 
