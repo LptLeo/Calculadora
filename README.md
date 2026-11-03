@@ -28,6 +28,7 @@ Instale os pacotes necessários do frontend e do servidor Express:
 ```bash
 npm install
 ```
+*(Nota: As versões de `vite` e `esbuild` foram alinhadas para `^0.28.0` resolvendo qualquer conflito de dependências entre pares).*
 
 ### 3. Iniciar o Servidor Full-Stack (Backend Express + Frontend Vite)
 Execute o comando de desenvolvimento:
