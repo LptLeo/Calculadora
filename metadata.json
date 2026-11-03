@@ -1,0 +1,6 @@
+{
+  "name": "Calculadora Algébrica & Aritmética",
+  "description": "Calculadora moderna de alta precisão com motor Python Decimal e interface escura intuitiva, com suporte a histórico, atalhos de teclado e demonstração algébrica passo a passo.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
