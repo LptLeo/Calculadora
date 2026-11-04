@@ -107,6 +107,16 @@ registrar_teste("Validação de Operando Inválido", not res_num_invalido["succe
 res_alias = calculate("2", "3", "+")
 registrar_teste("Alias calculate()", res_alias["result"] == "5", "2 + 3 = 5")
 
+# Teste de suporte a vírgula decimal (padrão pt-BR)
+res_virgula = calcular("14,5", "2,5", "+")
+registrar_teste("Suporte a Vírgula Decimal (pt-BR)", res_virgula["result"] == "17", "14,5 + 2,5 = 17")
+
+# Teste de precisão arbitrária de 50 dígitos significativos
+op_prec1 = "1." + "1" * 49
+op_prec2 = "2." + "2" * 49
+res_prec = calcular(op_prec1, op_prec2, "+")
+registrar_teste("Precisão Arbitrária de 50 Dígitos", res_prec["result"] == ("3." + "3" * 49), "50 dígitos significativos preservados")
+
 
 # =============================================================================
 # 2. TESTES DE COBERTURA DO FLUXO DO DISPLAY (DisplaySimulator)

@@ -121,7 +121,8 @@ HTML_PAGINA = """<!DOCTYPE html>
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Calculadora 100% Python</title>
+  <title>Calculadora</title>
+  <meta name="description" content="Calculadora moderna de alta precisão desenvolvida em 100% Python com motor Decimal de 50 dígitos, sem erros de ponto flutuante." />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -144,6 +145,12 @@ HTML_PAGINA = """<!DOCTYPE html>
       font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
     }
 
+    html, body {
+      width: 100%;
+      max-width: 100%;
+      overflow-x: hidden;
+    }
+
     body {
       background-color: var(--bg);
       color: var(--text);
@@ -151,7 +158,7 @@ HTML_PAGINA = """<!DOCTYPE html>
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 20px;
+      padding: 20px 16px;
     }
 
     header {
@@ -160,9 +167,11 @@ HTML_PAGINA = """<!DOCTYPE html>
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 16px 0 24px 0;
+      padding: 14px 0 20px 0;
       border-bottom: 1px solid var(--border);
-      margin-bottom: 30px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+      gap: 12px;
     }
 
     .brand {
@@ -186,14 +195,15 @@ HTML_PAGINA = """<!DOCTYPE html>
 
     .header-actions {
       display: flex;
-      gap: 10px;
+      gap: 8px;
+      flex-wrap: wrap;
     }
 
     .btn-action {
       background: #111420;
       border: 1px solid var(--border);
       color: var(--text-muted);
-      padding: 8px 14px;
+      padding: 8px 12px;
       border-radius: 12px;
       font-size: 0.8rem;
       font-weight: 500;
@@ -212,12 +222,36 @@ HTML_PAGINA = """<!DOCTYPE html>
       max-width: 900px;
       display: grid;
       grid-template-columns: 1fr;
-      gap: 30px;
+      gap: 24px;
     }
 
     @media (min-width: 768px) {
       .main-layout {
         grid-template-columns: 380px 1fr;
+      }
+    }
+
+    @media (max-width: 480px) {
+      body {
+        padding: 12px 10px;
+      }
+      header {
+        margin-bottom: 16px;
+      }
+      .calc-card, .literature-card {
+        padding: 16px 12px !important;
+        border-radius: 20px !important;
+      }
+      button.key {
+        height: 52px !important;
+        font-size: 1.1rem !important;
+        border-radius: 12px !important;
+      }
+      .main-output {
+        font-size: 2.1rem !important;
+      }
+      .modal-content {
+        padding: 16px 12px !important;
       }
     }
 
@@ -292,8 +326,15 @@ HTML_PAGINA = """<!DOCTYPE html>
       padding: 10px 14px;
       margin-bottom: 18px;
       font-size: 0.75rem;
+      line-height: 1.45;
       color: #c7d2fe;
       display: none;
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
+      word-break: break-word;
+      overflow-wrap: anywhere;
+      white-space: normal;
     }
 
     .algebraic-ribbon.active {
@@ -455,7 +496,7 @@ HTML_PAGINA = """<!DOCTYPE html>
       border: 1px solid var(--border);
       border-radius: 24px;
       width: 100%;
-      max-width: 650px;
+      max-width: 720px;
       max-height: 85vh;
       overflow-y: auto;
       padding: 24px;
@@ -663,34 +704,44 @@ HTML_PAGINA = """<!DOCTYPE html>
 
     const artigos = {
       sintese: {
-        titulo: "Fundamentos da Aritmética e Teoria de Corpos",
-        meta: "David Hilbert & Gottlob Frege (1899–1900)",
-        texto: "Estabelece que a álgebra decorre estritamente de duas operações primitivas em grupos abelianos e seus respectivos inversos.",
-        link: "https://plato.stanford.edu/entries/hilbert-program/"
+        titulo: "A Construção dos Números Reais e a Estrutura de Corpo",
+        meta: "Prof. Elon Lages Lima — IMPA & Coleção do Professor de Matemática (SBM)",
+        texto: "A aritmética real fundamenta-se na estrutura algébrica de corpo (ℝ, +, ·). Todas as contas decorrem estritamente de duas operações primitivas e da aplicação de seus respectivos inversos algébricos.",
+        formula: "(ℝ, +, ·) | a · (b + c) = a · b + a · c",
+        exemplo: "10 + 10 = 20 e 5 · 4 = 20",
+        link: "https://impa.br/ensino/livros/colecao-do-professor-de-matematica/"
       },
       adicao: {
-        titulo: "Axiomas de Peano e a Adição Primitiva",
-        meta: "Giuseppe Peano (Turim, 1889)",
-        texto: "Formaliza indutivamente a Adição como translação linear com o zero como elemento neutro estrito.",
-        link: "https://plato.stanford.edu/entries/peano/"
+        titulo: "O Conceito de Adição e os Números Naturais",
+        meta: "Revista do Professor de Matemática (RPM - SBM) & IME-USP",
+        texto: "A adição é a operação primitiva de acumulação de quantidades e translação na reta real. Possui o zero como elemento neutro estrito e preserva as propriedades comutativa e associativa.",
+        formula: "a + b = c (Elemento neutro: a + 0 = a)",
+        exemplo: "10 + 10 = 20",
+        link: "https://rpm.org.br/"
       },
       subtracao: {
-        titulo: "Cortes de Dedekind e o Inverso Aditivo",
-        meta: "Richard Dedekind (1872)",
-        texto: "Demonstra que a subtração é a soma com o inverso aditivo simétrico: a − b ≡ a + (−b).",
-        link: "https://mathshistory.st-andrews.ac.uk/Biographies/Dedekind/"
+        titulo: "Por que Menos com Menos dá Mais? O Inverso Aditivo",
+        meta: "Sociedade Brasileira de Educação Matemática (SBEM) & Unicamp",
+        texto: "Subtrair um número é, por definição axiomática, somar pelo elemento simétrico ou oposto (−b). A subtração não é uma operação primitiva, mas a extensão direta da adição aos reais.",
+        formula: "a − b ≡ a + (−b) (Simétrico: b + (−b) = 0)",
+        exemplo: "5 − 3 ≡ 5 + (−3) = 2",
+        link: "http://www.sbembrasil.org.br/"
       },
       multiplicacao: {
-        titulo: "Investigações Aritméticas e Homomorfismo",
-        meta: "Carl Friedrich Gauss (Göttingen, 1801)",
-        texto: "Formalizou a multiplicação como escalonamento homotético com elemento neutro 1 e absorvente 0.",
-        link: "https://mathshistory.st-andrews.ac.uk/Biographies/Gauss/"
+        titulo: "Multiplicação: Significados, Propriedades e Estruturas",
+        meta: "Instituto de Geociências e Ciências Exatas (UNESP) & Scielo Brasil",
+        texto: "A multiplicação representa o escalonamento homotético e a soma de parcelas congruentes. O número 1 atua como elemento neutro e o zero como elemento absorvente.",
+        formula: "a × b = c (Neutro: a × 1 = a | Nulo: a × 0 = 0)",
+        exemplo: "5 × 4 = 20",
+        link: "https://www.scielo.br/"
       },
       divisao: {
-        titulo: "O que Todo Cientista Deve Saber Sobre Ponto Flutuante",
-        meta: "David Goldberg & Prof. William Kahan (ACM, 1991)",
-        texto: "Analisa o recíproco multiplicativo b⁻¹ e explica por que divisões por zero são proibidas e o valor de motores decimais.",
-        link: "https://docs.oracle.com/cd/E19957-01/806-3568/ncg_goldberg.html"
+        titulo: "A Divisão por Zero e o Algoritmo da Divisão nos Reais",
+        meta: "Cadernos de Matemática da UFMG & IMPA",
+        texto: "Dividir a por b é multiplicar a pelo inverso recíproco b⁻¹. Como nenhum número real multiplicado por zero resulta em 1, a divisão por zero é indefinida e matematicamente impossível.",
+        formula: "a ÷ b ≡ a × b⁻¹ (com restrição estrita: b ≠ 0)",
+        exemplo: "10 ÷ 2 ≡ 10 × 0.5 = 5 (0 ÷ 10 = Indefinido)",
+        link: "https://www.mat.ufmg.br/"
       }
     };
 
@@ -701,8 +752,12 @@ HTML_PAGINA = """<!DOCTYPE html>
       document.getElementById("article-content").innerHTML = `
         <div class="article-title">${a.titulo}</div>
         <div class="article-meta">${a.meta}</div>
-        <p>${a.texto}</p>
-        <a href="${a.link}" target="_blank" class="article-btn">Ver Artigo Completo ↗</a>
+        <p style="margin-bottom: 10px; font-size: 0.82rem; line-height: 1.5; color: #cbd5e1;">${a.texto}</p>
+        <div style="background: rgba(99, 102, 241, 0.08); border: 1px solid rgba(99, 102, 241, 0.2); border-radius: 10px; padding: 10px 12px; margin-bottom: 10px; font-family: 'Fira Code', monospace; font-size: 0.75rem;">
+          <div style="margin-bottom: 4px;"><strong style="color: #a5b4fc;">Fórmula:</strong> <span style="color: #f1f5f9;">${a.formula}</span></div>
+          <div><strong style="color: #10b981;">Exemplo:</strong> <span style="color: #6ee7b7;">${a.exemplo}</span></div>
+        </div>
+        <a href="${a.link}" target="_blank" rel="noopener noreferrer" class="article-btn">Ver Artigo Completo ↗</a>
       `;
     }
     selecionarAba('sintese', document.querySelector('.tab-btn'));
@@ -734,9 +789,46 @@ HTML_PAGINA = """<!DOCTYPE html>
       atualizarTela();
     }
 
+    // CORREÇÃO COMPLETA: Permite apagar resultados calculados, dígitos e erros com o botão DEL
     function apagarUltimo() {
-      if (aguardandoSegundoNumero) return;
-      valorAtual = valorAtual.length > 1 ? valorAtual.slice(0, -1) : "0";
+      // 1. Se estiver exibindo mensagem de erro (ex: "Erro, Divisão por Zero"), reseta para "0"
+      if (valorAtual.startsWith("Erro") || valorAtual === "Erro") {
+        valorAtual = "0";
+        aguardandoSegundoNumero = false;
+        elPreview.innerText = "";
+        elRibbon.innerText = "";
+        elRibbon.classList.remove("active");
+        atualizarTela();
+        return;
+      }
+
+      // 2. Se o cálculo acabou de terminar e o resultado está na tela:
+      // O usuário agora PODE apagar dígitos do resultado com DEL!
+      if (aguardandoSegundoNumero && operadorAtual === null) {
+        aguardandoSegundoNumero = false;
+      }
+
+      // 3. Se um operador estiver selecionado (ex: "10 +") e o usuário apertar DEL:
+      // Cancela o operador pendente e volta a editar o primeiro termo
+      if (aguardandoSegundoNumero && operadorAtual !== null) {
+        operadorAtual = null;
+        aguardandoSegundoNumero = false;
+        elPreview.innerText = "";
+        atualizarTela();
+        return;
+      }
+
+      // 4. Apaga o último caractere do número
+      if (valorAtual.length > 1) {
+        if (valorAtual.length === 2 && valorAtual.startsWith("-")) {
+          valorAtual = "0";
+        } else {
+          valorAtual = valorAtual.slice(0, -1);
+          if (valorAtual === "-" || valorAtual === "") valorAtual = "0";
+        }
+      } else {
+        valorAtual = "0";
+      }
       atualizarTela();
     }
 

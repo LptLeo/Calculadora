@@ -70,8 +70,10 @@ def calcular(operando1_str: str, operando2_str: str, operador: str) -> dict:
 
     # Passo 2: Converter as strings em números Decimal de alta precisão
     try:
-        a = Decimal(str(operando1_str).strip())
-        b = Decimal(str(operando2_str).strip())
+        s1 = str(operando1_str).strip().replace(",", ".")
+        s2 = str(operando2_str).strip().replace(",", ".")
+        a = Decimal(s1)
+        b = Decimal(s2)
     except (InvalidOperation, TypeError, ValueError):
         return {
             "success": False,
