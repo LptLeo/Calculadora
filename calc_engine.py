@@ -1,170 +1,177 @@
 #!/usr/bin/env python3
 """
-Motor de Cálculo Matemático de Alta Precisão (Python Decimal Engine)
-Implementação rigorosa para as operações fundamentais em Corpos Numéricos (R, +, *).
-Elimina discrepâncias de ponto flutuante do padrão IEEE 754.
+=============================================================================
+MOTOR DE CÁLCULO MATEMÁTICO DE ALTA PRECISÃO (100% PYTHON)
+=============================================================================
+Este arquivo contém a lógica matemática pura da calculadora.
+Ele foi escrito de forma simples e comentada para que qualquer programador
+iniciante em Python possa entender facilmente como os cálculos funcionam.
 """
 
-import sys
-import json
-from decimal import Decimal, InvalidOperation, DivisionByZero, getcontext
-from fractions import Fraction
+from decimal import Decimal, InvalidOperation, getcontext
 
-# Define precisão alta de trabalho para cálculo científico/financeiro
+# Definimos uma precisão de até 50 dígitos para evitar qualquer erro de arredondamento
 getcontext().prec = 50
 
-def format_decimal(d: Decimal) -> str:
-    """Formata o Decimal removendo notação científica e zeros supérfluos."""
-    try:
-        if d.is_zero():
-            return "0"
-        # Se for um valor inteiro exato
-        if d == d.to_integral():
-            return str(int(d))
-        # Formata sem notação científica
-        s = format(d, "f")
-        if "." in s:
-            s = s.rstrip("0").rstrip(".")
-        return s
-    except Exception:
-        return str(d)
 
-OPERATORS = {
-    "+": {
-        "name": "Adição",
-        "symbol": "+",
-        "algebraic_name": "Translação Linear / Acumulação",
-        "fn": lambda a, b: a + b,
-        "identity": "0",
-        "relation_fn": lambda a_dec, b_dec, a_str, b_str, res_str: (
-            f"{a_str} + {b_str} = {res_str} (Elemento neutro: 0, propriedade comutativa: {b_str} + {a_str} = {res_str})"
-        )
-    },
-    "-": {
-        "name": "Subtração",
-        "symbol": "−",
-        "algebraic_name": "Inverso Aditivo (Simétrico)",
-        "fn": lambda a, b: a - b,
-        "identity": "0",
-        "relation_fn": lambda a_dec, b_dec, a_str, b_str, res_str: (
-            f"{a_str} − {b_str} ≡ {a_str} + ({format_decimal(-b_dec)}) = {res_str} (A subtração é a soma pelo elemento simétrico -b)"
-        )
-    },
-    "*": {
-        "name": "Multiplicação",
-        "symbol": "×",
-        "algebraic_name": "Escalonamento Linear / Homomorfismo",
-        "fn": lambda a, b: a * b,
-        "identity": "1",
-        "relation_fn": lambda a_dec, b_dec, a_str, b_str, res_str: (
-            f"{a_str} × {b_str} = {res_str} (Elemento neutro: 1, elemento absorvente: 0, distributiva sobre a adição)"
-        )
-    },
-    "/": {
-        "name": "Divisão",
-        "symbol": "÷",
-        "algebraic_name": "Inverso Multiplicativo (Recíproco)",
-        "fn": lambda a, b: a / b,
-        "identity": "1",
-        "relation_fn": lambda a_dec, b_dec, a_str, b_str, res_str: (
-            f"{a_str} ÷ {b_str} ≡ {a_str} × ({format_decimal(Decimal(1)/b_dec if b_dec != 0 else Decimal(0))}) = {res_str} (A divisão é o produto pelo inverso recíproco b⁻¹ com b ≠ 0)"
-        )
-    }
-}
+def formatar_numero(numero_decimal: Decimal) -> str:
+    """
+    Transforma um número Decimal em um texto (string) limpo.
+    - Se for um número inteiro (ex: 20.0), remove o '.0' e retorna '20'.
+    - Se for decimal (ex: 0.3000), remove os zeros extras à direita e retorna '0.3'.
+    - Evita notação científica indesejada (como 2E+1).
+    """
+    if numero_decimal.is_zero():
+        return "0"
 
-def calculate(operand1_str: str, operand2_str: str, operator_symbol: str) -> dict:
-    if operator_symbol not in OPERATORS:
+    # Verifica se o número é um inteiro exato (ex: 5.0 vira 5)
+    if numero_decimal == numero_decimal.to_integral():
+        return str(int(numero_decimal))
+
+    # Formata como número decimal comum (sem notação científica)
+    texto = format(numero_decimal, "f")
+    if "." in texto:
+        texto = texto.rstrip("0").rstrip(".")
+    return texto
+
+
+def somar(a: Decimal, b: Decimal) -> Decimal:
+    """Realiza a Adição (a + b)"""
+    return a + b
+
+
+def subtrair(a: Decimal, b: Decimal) -> Decimal:
+    """Realiza a Subtração (a - b)"""
+    return a - b
+
+
+def multiplicar(a: Decimal, b: Decimal) -> Decimal:
+    """Realiza a Multiplicação (a * b)"""
+    return a * b
+
+
+def dividir(a: Decimal, b: Decimal) -> Decimal:
+    """Realiza a Divisão (a / b)"""
+    return a / b
+
+
+def calcular(operando1_str: str, operando2_str: str, operador: str) -> dict:
+    """
+    Função principal que recebe dois números e o operador escolhido (+, -, *, /).
+    Retorna um dicionário com o resultado e a explicação matemática.
+    """
+    # Passo 1: Validar se o operador é suportado
+    operadores_validos = ["+", "-", "*", "/"]
+    if operador not in operadores_validos:
         return {
             "success": False,
-            "error": f"Operador inválido '{operator_symbol}'. Operadores suportados: +, -, *, /"
+            "error": f"Operador inválido '{operador}'. Use apenas: +, -, * ou /."
         }
 
+    # Passo 2: Converter as strings em números Decimal de alta precisão
     try:
-        a = Decimal(str(operand1_str).strip())
-        b = Decimal(str(operand2_str).strip())
+        a = Decimal(str(operando1_str).strip())
+        b = Decimal(str(operando2_str).strip())
     except (InvalidOperation, TypeError, ValueError):
         return {
             "success": False,
-            "error": "Operandos devem ser números decimais válidos."
+            "error": "Por favor, digite números válidos."
         }
 
-    op_meta = OPERATORS[operator_symbol]
-
-    # Regra estrita de Divisão por Zero e numeradores/denominadores nulos para suíte de testes
-    if operator_symbol == "/":
-        if b == 0 or a == 0:
+    # Passo 3: Tratamento de Divisão por Zero e numeradores/denominadores nulos
+    if operador == "/":
+        if b == Decimal(0) or a == Decimal(0):
             return {
                 "success": False,
                 "error": "Erro, Divisão por Zero",
                 "result": "Erro, Divisão por Zero",
-                "operand1": format_decimal(a),
-                "operand2": format_decimal(b),
-                "operator": operator_symbol,
+                "operand1": formatar_numero(a),
+                "operand2": formatar_numero(b),
+                "operator": "/",
                 "operatorName": "Divisão",
                 "operatorSymbol": "÷",
                 "algebraicConcept": "Inversibilidade Indefinida",
                 "algebraicExplanation": "Divisão envolvendo zero é indefinida (o inverso multiplicativo não existe no corpo R)."
             }
 
-    try:
-        result_dec = op_meta["fn"](a, b)
-        formatted_res = format_decimal(result_dec)
-        formatted_a = format_decimal(a)
-        formatted_b = format_decimal(b)
+    # Passo 4: Executar a operação escolhida usando if / elif simples
+    if operador == "+":
+        resultado_dec = somar(a, b)
+        nome_op = "Adição"
+        simbolo_op = "+"
+        conceito = "Translação Linear / Acumulação"
+        explicacao = f"{formatar_numero(a)} + {formatar_numero(b)} = {formatar_numero(resultado_dec)} (Elemento neutro: 0, propriedade comutativa: {formatar_numero(b)} + {formatar_numero(a)} = {formatar_numero(resultado_dec)})"
 
-        # Relação algébrica explicativa com tipos seguros
-        algebraic_explanation = op_meta["relation_fn"](a, b, formatted_a, formatted_b, formatted_res)
+    elif operador == "-":
+        resultado_dec = subtrair(a, b)
+        nome_op = "Subtração"
+        simbolo_op = "−"
+        conceito = "Inverso Aditivo (Simétrico)"
+        explicacao = f"{formatar_numero(a)} − {formatar_numero(b)} ≡ {formatar_numero(a)} + ({formatar_numero(-b)}) = {formatar_numero(resultado_dec)} (A subtração é a soma pelo elemento simétrico -b)"
 
-        # Representação de fração se for divisão
-        fraction_representation = None
-        if operator_symbol == "/" and b != 0:
-            try:
-                frac = Fraction(int(a), int(b))
-                fraction_representation = f"{frac.numerator}/{frac.denominator}"
-            except Exception:
-                pass
+    elif operador == "*":
+        resultado_dec = multiplicar(a, b)
+        nome_op = "Multiplicação"
+        simbolo_op = "×"
+        conceito = "Escalonamento Linear / Homomorfismo"
+        explicacao = f"{formatar_numero(a)} × {formatar_numero(b)} = {formatar_numero(resultado_dec)} (Elemento neutro: 1, elemento absorvente: 0, distributiva sobre a adição)"
 
-        return {
-            "success": True,
-            "result": formatted_res,
-            "operand1": formatted_a,
-            "operand2": formatted_b,
-            "operator": operator_symbol,
-            "operatorName": op_meta["name"],
-            "operatorSymbol": op_meta["symbol"],
-            "algebraicConcept": op_meta["algebraic_name"],
-            "algebraicExplanation": algebraic_explanation,
-            "fractionRepresentation": fraction_representation,
-            "engine": "Python 3.10 Decimal (Precisão Arbitrária)",
-            "isExactDecimal": True
-        }
+    elif operador == "/":
+        resultado_dec = dividir(a, b)
+        nome_op = "Divisão"
+        simbolo_op = "÷"
+        conceito = "Inverso Multiplicativo (Recíproco)"
+        reciproco = formatar_numero(Decimal(1) / b)
+        explicacao = f"{formatar_numero(a)} ÷ {formatar_numero(b)} ≡ {formatar_numero(a)} × ({reciproco}) = {formatar_numero(resultado_dec)} (A divisão é o produto pelo inverso recíproco b⁻¹)"
 
-    except DivisionByZero:
-        return {
-            "success": False,
-            "error": "Erro, Divisão por Zero",
-            "result": "Erro, Divisão por Zero"
-        }
-    except Exception as e:
-        return {
-            "success": False,
-            "error": f"Erro interno de cálculo: {str(e)}"
-        }
+    # Passo 5: Formatar e retornar o dicionário com todas as informações
+    return {
+        "success": True,
+        "result": formatar_numero(resultado_dec),
+        "operand1": formatar_numero(a),
+        "operand2": formatar_numero(b),
+        "operator": operador,
+        "operatorName": nome_op,
+        "operatorSymbol": simbolo_op,
+        "algebraicConcept": conceito,
+        "algebraicExplanation": explicacao,
+        "engine": "Python 3.10 Decimal (Precisão Arbitrária)",
+        "isExactDecimal": True
+    }
 
+
+# Alias em inglês para compatibilidade
+calculate = calcular
+
+
+# Execução direta pelo terminal (CLI ou teste rápido)
 if __name__ == "__main__":
-    if len(sys.argv) > 1:
-        try:
-            if sys.argv[1] == "--json":
-                input_data = json.loads(sys.stdin.read())
-                res = calculate(input_data.get("operand1", "0"), input_data.get("operand2", "0"), input_data.get("operator", "+"))
-                print(json.dumps(res))
-            else:
-                op1 = sys.argv[1]
-                op = sys.argv[2]
-                op2 = sys.argv[3]
-                res = calculate(op1, op2, op)
-                print(json.dumps(res))
-        except Exception as e:
-            print(json.dumps({"success": False, "error": str(e)}))
+    import sys
+    import json
+
+    # Se receber 3 argumentos (ex: python3 calc_engine.py 10 + 10), calcula e imprime em JSON
+    if len(sys.argv) == 4:
+        operando1 = sys.argv[1]
+        operador = sys.argv[2]
+        operando2 = sys.argv[3]
+        resultado = calcular(operando1, operando2, operador)
+        print(json.dumps(resultado, ensure_ascii=False))
     else:
-        print(json.dumps(calculate("0.1", "0.2", "+"), indent=2))
+        # Se for rodado sem argumentos, roda testes demonstrativos rápidos
+        print("=" * 55)
+        print("  DEMONSTRAÇÃO DO MOTOR MATEMÁTICO (calc_engine.py)")
+        print("=" * 55)
+        exemplos = [
+            ("10", "+", "10"),
+            ("10", "/", "2"),
+            ("5", "*", "4"),
+            ("5", "-", "3"),
+            ("0", "/", "10"),
+            ("10", "/", "0"),
+            ("0.1", "+", "0.2")
+        ]
+        for a, op, b in exemplos:
+            res = calcular(a, b, op)
+            valor = res.get("result") if res["success"] else res.get("error")
+            print(f"  {a:>4} {op} {b:<4} = {valor}")
+        print("=" * 55)

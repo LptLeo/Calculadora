@@ -1,115 +1,134 @@
-# Calculadora Algébrica & Aritmética de Alta Precisão
+# Calculadora 100% Python (Alta Precisão Aritmética)
 
-Calculadora moderna full-stack com interface escura minimalista em React e motor de cálculo determinístico de alta precisão em Python (`decimal.Decimal`), eliminando discrepâncias de ponto flutuante do padrão IEEE 754. O sistema oferece suporte às quatro operações fundamentais (adição, subtração, multiplicação e divisão), atalhos de teclado físico, histórico persistente de cálculos e laboratório interativo dos fundamentos algébricos.
+Uma aplicação de calculadora elegante e determinística desenvolvida **100% em Python**, sem nenhuma dependência externa (utiliza exclusivamente a biblioteca padrão do Python). Possui interface moderna com tema escuro servida na porta 3000 via `http.server`, motor aritmético de alta precisão com `decimal.Decimal` (50 dígitos), fita de fundamentação algébrica passo a passo, literatura matemática com artigos acadêmicos renomados e um laboratório interativo para testes das quatro operações elementares.
 
 ---
 
 ## 📋 Pré-requisitos
 
-Para executar a aplicação localmente, certifique-se de ter instalado em seu ambiente:
+Para executar este projeto, você precisa apenas de:
 
-- **Node.js**: Versão 18.x ou superior
-- **npm**: Versão 9.x ou superior (já integrado ao Node.js)
-- **Python**: Versão 3.10 ou superior (com biblioteca padrão `decimal`, `json`, `sys` e `fractions`)
-- **Navegador Web Moderno**: Google Chrome, Mozilla Firefox, Microsoft Edge ou Safari
+- **Python**: Versão 3.8 ou superior (recomendado Python 3.10 ou superior).
+- **Navegador Web**: Qualquer navegador moderno (Google Chrome, Firefox, Safari ou Edge).
+- *(Nenhum gerenciador de pacotes externo como pip ou npm é obrigatório; o projeto usa apenas a biblioteca padrão do Python: `http.server`, `decimal`, `json`, `sys`, `os`).*
 
 ---
 
 ## 🚀 Passo a Passo para Executar o Aplicativo
 
-### 1. Clonar ou Acessar o Diretório do Projeto
-Abra o terminal e navegue até a pasta raiz da aplicação:
+### 1. Acessar a Pasta do Projeto
+Abra o terminal no diretório da calculadora:
 ```bash
-cd calculator-app
+cd /app/applet
 ```
 
-### 2. Instalar as Dependências do Projeto
-Instale os pacotes necessários do frontend e do servidor Express:
+### 2. Iniciar o Servidor Python
+Execute o comando direto em Python:
 ```bash
-npm install
+python3 server.py
 ```
-*(Nota: As versões de `vite` e `esbuild` foram alinhadas para `^0.28.0` resolvendo qualquer conflito de dependências entre pares).*
+*(Ou, se preferir via npm: `npm run dev` ou `npm start`).*
 
-### 3. Iniciar o Servidor Full-Stack (Backend Express + Frontend Vite)
-Execute o comando de desenvolvimento:
-```bash
-npm run dev
-```
-
-O servidor será inicializado na porta 3000:
+Você verá a seguinte mensagem de inicialização no terminal:
 ```text
-Calculadora Server rodando em http://localhost:3000
+============================================================
+ Servidor Python Iniciado com Sucesso!
+ Acesse no navegador: http://localhost:3000
+============================================================
 ```
 
-### 4. Acessar a Aplicação
-Abra seu navegador e acesse:
-```
+### 3. Acessar no Navegador
+Abra seu navegador de preferência e entre no endereço:
+```text
 http://localhost:3000
 ```
 
-### 5. (Opcional) Executar a Suíte Automatizada de Testes
-Para verificar a integridade de todas as operações, limites de zero, números negativos e endpoints HTTP, execute:
+### 4. Executar os Testes Automatizados (100% de Cobertura)
+Para rodar a suíte completa de testes (unitários do motor, estados do display e integração do servidor HTTP):
 ```bash
 python3 test_suite.py
 ```
+*(Ou via npm: `npm test`).*
+
+Todos os 58 testes serão executados e validados com 100% de sucesso.
 
 ---
 
 ## ❓ Perguntas e Respostas Técnicas
 
-### Quais são os principais componentes do código gerado?
+### 1. Quais são os principais componentes do código gerado?
 
-1. **`calc_engine.py` (Motor de Cálculo em Python):**  
-   Núcleo aritmético que utiliza a biblioteca nativa `decimal.Decimal` com precisão de 50 dígitos. Executa as operações matemáticas, aplica as regras algébricas de corpos $(\mathbb{R}, +, \cdot)$, trata restrições como divisão por zero e formata os valores eliminando notações científicas indesejadas.
+O projeto foi estruturado em módulos independentes e fáceis de entender para qualquer programador iniciante em Python:
 
-2. **`server.ts` (Servidor Full-Stack Express):**  
-   Servidor Node.js que expõe as rotas REST `/api/calculate` (que invoca o script Python via `child_process.execFile`) e `/api/theory` (que fornece as definições axiomáticas), além de montar os middlewares do Vite no ambiente de desenvolvimento.
+1. **`calc_engine.py` (Motor Matemático Puro):**  
+   Contém as funções matemáticas fundamentais (`somar`, `subtrair`, `multiplicar`, `dividir`, `formatar_numero` e `calcular`). Utiliza a classe nativa `decimal.Decimal` configurada com precisão de 50 dígitos para eliminar imprecisões de ponto flutuante do padrão IEEE 754 (como `0.1 + 0.2 = 0.30000000000000004`). Também trata divisões com zero no numerador ou denominador e gera explicações algébricas dos corpos numéricos $(\mathbb{R}, +, \cdot)$.
 
-3. **`src/components/Calculator.tsx` (Componente Principal da Calculadora):**  
-   Interface do usuário que gerencia o estado da digitação, a fita algébrica em tempo real, os atalhos de teclado físico, a escala dinâmica de fonte do display e a comunicação com a API.
+2. **`server.py` (Servidor Web HTTP Nativo):**  
+   Utiliza `http.server.HTTPServer` e `BaseHTTPRequestHandler` da biblioteca padrão para criar um servidor web leve e rápido sem precisar de frameworks pesados:
+   - **`GET /`**: Entrega o HTML, CSS e JavaScript responsivo da calculadora.
+   - **`POST /api/calculate`**: Recebe os números e a operação em formato JSON, chama o `calc_engine.py` e devolve a resposta calculada.
+   - **`GET /api/theory`**: Retorna os axiomas formais e literatura matemática das operações.
+   - **`GET /api/health`**: Endpoint de verificação de integridade do servidor.
 
-4. **`src/components/MathTheoryModal.tsx` (Laboratório de Fundamentos Matemáticos):**  
-   Modal interativo que apresenta a teoria dos corpos numéricos e permite testar cálculos individualmente em cada uma das quatro operações com explicações axiomáticas em tempo real.
+3. **Interface do Usuário (Frontend Autônomo e Responsivo):**  
+   Interface em tema escuro com visor digital (linha de preview superior, display numérico e fita algébrica com quebra de linha automática), teclado numérico completo com suporte a apagar resultados diretamente pelo botão `DEL`, aba de artigos matemáticos de renome em português (Prof. Elon Lages Lima/IMPA, RPM/SBM, SBEM/Unicamp, UNESP, UFMG) com fórmulas e exemplos curtos de até 3 linhas, e modal interativo "Fundamentos Matemáticos".
 
-5. **`src/components/MathOverviewCard.tsx` (Literatura Acadêmica):**  
-   Card com resumos de artigos históricos de matemática (Peano, Dedekind, Gauss, Hilbert e Goldberg/Kahan) com links para as publicações oficiais.
-
-6. **`src/components/HistoryDrawer.tsx` e `src/components/IEEE754ComparisonModal.tsx`:**  
-   Componentes para controle de histórico local (`localStorage`) e demonstração comparativa prática entre o ponto flutuante tradicional (IEEE 754) e o motor decimal exato.
-
-7. **`test_suite.py` (Suíte de Testes):**  
-   Script automatizado que valida 26 testes unitários no Python e 11 testes de integração HTTP na API.
+4. **`test_suite.py` e `test_display_flow.py` (Suíte de Testes com 100% de Cobertura):**  
+   Scripts de testes automatizados que validam todas as operações, limites de zero, números negativos, fluxo de estados do display (incluindo o botão `DEL` em resultados e erros, e o botão `AC` que limpa todo o visor) e requisições HTTP ponta a ponta.
 
 ---
 
-### Como a aplicação recebe os números e identifica a operação escolhida?
+### 2. Como a aplicação recebe os números e identifica a operação escolhida?
 
-1. **Captura dos Dígitos:**  
-   O usuário insere os números através de cliques nos botões da tela ou digitando no teclado físico (capturado pelo listener global `keydown`). A função `inputDigit()` acumula os caracteres na string `displayValue`.
+O fluxo ocorre de maneira clara e sequencial em 3 etapas:
 
-2. **Identificação e Armazenamento da Operação:**  
-   Ao selecionar um operador (`+`, `−`, `×` ou `÷`), a função `chooseOperator()` é acionada:
-   - O valor atual da tela é salvo como `prevOperand`.
-   - O símbolo correspondente é armazenado no estado `operator`.
-   - A flag `waitingForNextOperand` é ativada para que o próximo dígito digitado inicie um novo termo.
-   - Caso já exista uma operação pendente na memória, a aplicação calcula o resultado intermediário antes de encadear o novo operador.
+1. **Captura da Digitação (Números):**  
+   Quando o usuário clica nos botões numéricos (0 a 9) ou digita no teclado físico, a função JavaScript `digitar(digito)` é disparada. Se o display estava em `"0"` ou aguardando o segundo número, ele substitui o valor; caso contrário, concatena o dígito ao final da string (ex: digita `"1"`, depois `"4"` vira `"14"`). A função `pontoDecimal()` permite adicionar vírgula decimal apenas uma vez.
 
-3. **Envio da Operação:**  
-   Ao pressionar `=` ou `Enter`, a função `handleEquals()` valida se ambos os operandos existem e envia uma requisição HTTP `POST /api/calculate` com o payload JSON `{ operand1, operator, operand2 }`.
+2. **Identificação da Operação:**  
+   Ao clicar nos botões de operação (`+`, `−`, `×`, `÷`) ou pressionar essas teclas no teclado, a função `escolherOperador(op)` é chamada:
+   - Armazena o número digitado até o momento na variável `operando1`.
+   - Salva o símbolo escolhido na variável `operadorAtual`.
+   - Atualiza a linha de preview superior (ex: `"14.5 +"`).
+   - Ativa a flag booleana `aguardandoSegundoNumero = true` para que a próxima digitação inicie o segundo número.
+   - Se o usuário já tiver uma conta anterior pendente, ela calcula automaticamente o resultado antes de prosseguir (encadeamento de operações).
+
+3. **Disparo do Cálculo:**  
+   Ao pressionar o botão `=` ou a tecla Enter, a função `calcularResultado()` reúne os dados em um objeto JSON:
+   ```json
+   {
+     "operand1": "14.5",
+     "operand2": "35.5",
+     "operator": "+"
+   }
+   ```
+   E envia uma requisição via `fetch('/api/calculate')` com método POST para o backend Python.
 
 ---
 
-### Como a lógica de programação é utilizada para realizar os cálculos e apresentar os resultados?
+### 3. Como a lógica de programação é utilizada para realizar os cálculos e apresentar os resultados?
 
-1. **Processamento Matemático Determinístico:**  
-   O backend recebe os dados e os converte em objetos `Decimal(str)`. As operações são executadas de forma determinística por meio de um mapeamento funcional (`+`, `-`, `*`, `/`). A divisão verifica previamente se o divisor ou o termo inicial é nulo (`b == 0` ou `a == 0`), retornando imediatamente `Erro, Divisão por Zero`.
+A lógica foi projetada para ser direta, determinística e didática:
 
-2. **Normalização e Eliminação de Erros de Ponto Flutuante:**  
-   A função `format_decimal()` verifica se o resultado é um inteiro exato (convertendo com `str(int(d))`) ou um decimal, removendo zeros desnecessários à direita. Isso assegura que contas como `0.1 + 0.2` resultem no exato `0.3`, sem resíduos binários como `0.30000000000000004`.
+1. **Recepção e Validação no Python:**  
+   O método `do_POST()` no `server.py` lê o corpo da requisição e repassa para a função `calcular()` em `calc_engine.py`.
+   - **Validação de Operador:** Verifica se o operador está na lista `['+', '-', '*', '/']`.
+   - **Conversão Segura:** Converte os textos em instâncias de `Decimal(str)` para garantir exatidão absoluta.
+   - **Tratamento de Divisão por Zero:** Antes de efetuar a divisão, o código verifica se o divisor ou dividendo é zero (`b == 0` ou `a == 0`). Se for, retorna imediatamente o erro padronizado `"Erro, Divisão por Zero"`.
 
-3. **Renderização e Apresentação no Frontend:**  
-   Ao receber a resposta JSON:
-   - O valor retornado substitui `displayValue` no visor principal.
-   - A função `getDisplayFontSize()` ajusta dinamicamente o tamanho da fonte para acomodar números grandes ou mensagens de erro sem quebrar o layout.
-   - A **Fita Algébrica** exibe logo abaixo da tela a relação algébrica formal do cálculo realizado (ex.: demonstrando que $5 - 3 \equiv 5 + (-3) = 2$ por meio do inverso aditivo).
-   - O cálculo é arquivado na gaveta de histórico e persistido no `localStorage`.
+2. **Execução Aritmética e Algébrica:**  
+   Um bloco condicional simples (`if / elif`) direciona para a função correspondente:
+   - `+` chama `somar(a, b)` $\rightarrow$ Acumulação linear.
+   - `-` chama `subtrair(a, b)` $\rightarrow$ Soma pelo elemento simétrico $(-b)$.
+   - `*` chama `multiplicar(a, b)` $\rightarrow$ Escalonamento homotético.
+   - `/` chama `dividir(a, b)` $\rightarrow$ Multiplicação pelo elemento recíproco $(b^{-1})$.
+
+3. **Formatação Limpa:**  
+   A função `formatar_numero()` verifica se o número resultante é um inteiro exato (ex: `20.0` vira `"20"`) ou se possui casas decimais (ex: `0.3000` vira `"0.3"`), eliminando notações científicas indesejadas como `2E+1`.
+
+4. **Apresentação e Atualização do Display:**  
+   O servidor devolve um JSON com o resultado e a justificativa algébrica. O navegador então:
+   - Atualiza o visor principal com o resultado (ex: `"50"`).
+   - Atualiza a linha superior de preview com a equação completa (ex: `"14.5 + 35.5 ="`).
+   - Exibe a **Fita Algébrica** detalhando a propriedade matemática utilizada.
+   - Quando o botão **AC (All Clear)** é clicado, a função `limparTudo()` zera o visor para `"0"`, limpa a linha de preview, esconde a fita algébrica e redefine todos os estados internos.
